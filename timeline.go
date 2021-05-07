@@ -55,18 +55,18 @@ func getFile(id string, url string, media string, singlemode bool) {
 	var mtype string
 	fext := path.Ext(url)
 	fname := id + fext
-	mediapath := RunCfg.feedpath + "media/"
+	//	mediapath := RunCfg.feedpath + "media/"
 	if strings.EqualFold(media, "image") {
 		mtype = "image_"
 	} else {
 		mtype = "media_"
 		if (!singlemode && Config.loadmedia != 1) || (Config.loadmedia == 1 && !inmedialist(fext)) {
-			intWriteFile(mediapath+mtype+fname, id, fext)
+			intWriteFile(RunCfg.mediapath+mtype+fname, id, fext)
 			return
 		}
 	}
 	fname = mtype + fname
-	fnpath := mediapath + fname
+	fnpath := RunCfg.mediapath + fname
 	if isexists(fnpath) { // if file exists
 		return
 	}
@@ -97,7 +97,7 @@ func getPost(id string, singlemode bool) {
 	outtext := regJsReplace.ReplaceAll(body, []byte(`"$1":"$2"`))
 
 	if !singlemode {
-		ioutil.WriteFile(RunCfg.feedpath+"json/posts_"+id, outtext, 0644)
+		ioutil.WriteFile(RunCfg.jpath+id, outtext, 0644)
 	} else {
 		ioutil.WriteFile(RunCfg.feedpath+"/"+id+".json", outtext, 0644)
 	}
@@ -133,7 +133,7 @@ func (timeline *TTimeline) getTimeline(offset int) *TTimeline {
 	// json correction
 	timeline.body = regJsReplace.ReplaceAll(body, []byte(`"$1":"$2"`))
 
-	timeline.lasterr = ioutil.WriteFile(RunCfg.feedpath+"timeline/timeline_"+xoffs, timeline.body, 0644)
+	timeline.lasterr = ioutil.WriteFile(RunCfg.timeline+xoffs, timeline.body, 0644)
 	timeline.offset = offset
 	timeline.textoffset = xoffs
 	return timeline
@@ -163,7 +163,7 @@ func (timeline *TTimeline) processTimeline() int {
 		cmark := strconv.Itoa(len(frf.Posts[idx].Comments) + cx)
 		newmark := frf.Posts[idx].UpdatedAt + cmark
 		feedlen++
-		if !isexists(RunCfg.feedpath + "json/posts_" + p) {
+		if !isexists(RunCfg.jpath + p) {
 			intGetPost(p, newmark, "")
 			MyStat.newrecords++
 		} else {
@@ -175,7 +175,7 @@ func (timeline *TTimeline) processTimeline() int {
 		}
 	}
 	if len(tlist) > 0 {
-		ioutil.WriteFile(RunCfg.feedpath+"index/list_"+timeline.textoffset, []byte(tlist), 644)
+		ioutil.WriteFile(RunCfg.list+timeline.textoffset, []byte(tlist), 644)
 	}
 	MyStat.records += feedlen
 	return feedlen

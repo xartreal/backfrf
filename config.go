@@ -7,7 +7,7 @@ import (
 	"github.com/vaughan0/go-ini"
 )
 
-var myversion = "0.9.1"
+var myversion = "0.9.2"
 var useragent = "ARL backfrf/" + myversion
 
 var RunCfg struct {
@@ -15,6 +15,11 @@ var RunCfg struct {
 	feedpath string
 	feedname string
 	extflag  bool //true if mediafilter empty
+	// fast path
+	jpath     string
+	timeline  string
+	list      string
+	mediapath string
 }
 
 var Config struct {

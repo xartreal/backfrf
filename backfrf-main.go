@@ -9,13 +9,14 @@ import (
 
 func helpprog() {
 	fmt.Print("Usage: \n\n",
-		"get feed&html: backfrf feed <feed>\n",
-		"get single post: backfrf get <addr>\n",
-		"get jsons: backfrf json <feed>\n",
-		"get jsons only: backfrf jsononly <feed>\n",
-		"rebuild html: backfrf html <feed>\n",
-		"check integrity: backfrf check <feed>\n",
-		"find lost posts: backfrf lost <feed>\n",
+		"get feed&html:     backfrf feed <feed>\n",
+		"get single post:   backfrf get <addr>\n",
+		"get jsons:         backfrf json <feed>\n",
+		"get jsons only:    backfrf jsononly <feed>\n",
+		"rebuild html:      backfrf html <feed>\n",
+		"check integrity:   backfrf check <feed>\n",
+		"find lost posts:   backfrf lost <feed>\n",
+		"list feeds:        backfrf list *\n",
 		"reindex timelines: backfrf reindex <feed>\n\n")
 	os.Exit(1)
 	//	fmt.Printf("init configuration: backfrf init <username> <password>\n")
@@ -101,6 +102,9 @@ func main() {
 		MkFeedPath(feedname)
 		message("Rebuilding timeline lists in feed [%s]\n", feedname)
 		rebuildLists()
+		os.Exit(0)
+	case "list": //list feeds
+		listFeeds(feedname)
 		os.Exit(0)
 	default:
 	}

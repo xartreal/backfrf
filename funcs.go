@@ -61,6 +61,11 @@ func MkFeedPath(feedname string) {
 	}
 	feedpath = strings.Replace(feedpath, ":", "-", -1) //todo: subfeeds?
 	RunCfg.feedpath = feedpath + "/"
+	// fast path
+	RunCfg.jpath = feedpath + "/json/posts_"
+	RunCfg.timeline = feedpath + "/timeline/timeline_"
+	RunCfg.list = feedpath + "/index/list_"
+	RunCfg.mediapath = feedpath + "/media/"
 }
 
 func loadtfile(name string) string {

@@ -10,7 +10,7 @@ import (
 	"github.com/xartreal/frfpanehtml"
 )
 
-var jpath string //json path
+//var jpath string //json path
 
 func loadtemplates(singlemode bool) {
 	frfpanehtml.Templates = &frfpanehtml.THtmlTemplate{
@@ -21,7 +21,7 @@ func loadtemplates(singlemode bool) {
 	//set params
 	frfpanehtml.Params = frfpanehtml.TParams{Feedpath: RunCfg.feedpath, Step: Config.step,
 		Singlemode: singlemode, IndexPrefix: "index_", IndexPostfix: ".html"}
-	jpath = RunCfg.feedpath + "json/posts_"
+	//	jpath = RunCfg.feedpath + "json/posts_"
 }
 
 func genPhtml(list []string, id string, isindex bool, title string, pen string, maxeof int) string {
@@ -32,7 +32,7 @@ func genPhtml(list []string, id string, isindex bool, title string, pen string, 
 			continue
 		}
 		//	fmt.Printf("l=%v\n", list[i])
-		xtext := frfpanehtml.LoadJson(jpath+list[i]).ToHtml(list[i], "")
+		xtext := frfpanehtml.LoadJson(RunCfg.jpath+list[i]).ToHtml(list[i], "")
 		if Config.allhtml == 1 {
 			afname := "html/" + list[i] + ".html"
 			ioutil.WriteFile(RunCfg.feedpath+afname, []byte(xtext), 0644)
@@ -45,7 +45,7 @@ func genPhtml(list []string, id string, isindex bool, title string, pen string, 
 
 func genhtml(offset int, maxeof int) {
 	toffset := strconv.Itoa(offset)
-	data, _ := ioutil.ReadFile(RunCfg.feedpath + "index/list_" + toffset)
+	data, _ := ioutil.ReadFile(RunCfg.list + toffset)
 	list := strings.Split(string(data), "\n")
 	outname := "html/index_" + toffset + ".html"
 	outfiletext := genPhtml(list, toffset, true, "offset "+toffset, "", maxeof)

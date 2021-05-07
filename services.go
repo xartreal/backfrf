@@ -113,19 +113,18 @@ func backup(feedname string) {
 }
 
 func rebuildHtml() {
-	hstart := 0
-	maxeof := Config.step
+	hstart, maxeof := 0, Config.step
 	loadtemplates(false)
 	//fmt.Printf("%d - %d -%d\n", hstart, step, maxeof)
 	fmt.Printf("\nScanning...")
-	for isexists(RunCfg.feedpath + "timeline/timeline_" + strconv.Itoa(hstart)) {
+	for isexists(RunCfg.timeline + strconv.Itoa(hstart)) {
 		hstart += Config.step
 		//fmt.Printf("s: %d\n", hstart)
 	}
 	if hstart > Config.step {
 		maxeof = hstart - Config.step
 	}
-	fmt.Printf(" %d records \n", maxeof-Config.step)
+	fmt.Printf(" last offset: %d\n", maxeof-Config.step)
 	fmt.Printf("HTMLing...\n")
 
 	for i := 0; i < maxeof; i += Config.step {
@@ -140,8 +139,8 @@ func rebuildHtml() {
 
 // special
 func checkTimeline(offset int) (int, int) {
-	errcnt := 0
-	text, _ := ioutil.ReadFile(RunCfg.feedpath + "timeline/timeline_" + strconv.Itoa(offset))
+	frflen, errcnt := 0, 0
+	text, _ := ioutil.ReadFile(RunCfg.timeline + strconv.Itoa(offset))
 	frf := new(FrFjtml)
 	if nlflag {
 		fmt.Printf("\n")
@@ -149,11 +148,10 @@ func checkTimeline(offset int) (int, int) {
 	fmt.Printf("\roffset: %d", offset)
 	nlflag = false
 	json.Unmarshal(text, frf)
-	frflen := 0
-	//check "posts" files
-	jpath := RunCfg.feedpath + "json/posts_"
+	// check id from timeline
+	//	jpath := RunCfg.feedpath + "json/posts_"
 	for _, p := range frf.Timelines.Posts {
-		if !isexists(jpath + p) {
+		if !isexists(RunCfg.jpath + p) {
 			if Config.debugmode == 1 {
 				fmt.Printf("\npost: %s", p)
 			}
@@ -167,14 +165,14 @@ func checkTimeline(offset int) (int, int) {
 	json.Unmarshal(text, frfz)
 	//	frfzlen := 0
 	mtype := ""
-	mpath := RunCfg.feedpath + "media/"
+	//	mpath := RunCfg.feedpath + "media/"
 	for _, p := range frfz.Attachments {
 		if strings.EqualFold(p.MediaType, "image") {
 			mtype = "image_"
 		} else {
 			mtype = "media_"
 		}
-		if !isexists(mpath + mtype + p.Id + path.Ext(p.Url)) {
+		if !isexists(RunCfg.mediapath + mtype + p.Id + path.Ext(p.Url)) {
 			//fmt.Printf(" image/media: %s\n", p.Id)
 			getFile(p.Id, p.Url, p.MediaType, false)
 			nlflag = true
@@ -190,15 +188,15 @@ func checkfeed() {
 	offset, errcnt, errinc := 0, 0, 0
 	nlflag = true
 	//	fmt.Println("")
-	openDB(RunCfg.feedpath+"db/media.db", "ext", &ExtDB)
+	//	openDB(RunCfg.feedpath+"db/media.db", "ext", &ExtDB)
 	for tmleof > 0 {
 		tmleof, errinc = checkTimeline(offset)
 		offset += Config.step
 		errcnt += errinc
 	}
-	fmt.Println("")
-	closeDB(&ExtDB)
-	fmt.Printf("\nErrors detected: %d\n", errcnt)
+	//	fmt.Println("")
+	//	closeDB(&ExtDB)
+	fmt.Printf("\n\nErrors detected: %d\n", errcnt)
 }
 
 var postlist []string
@@ -216,16 +214,16 @@ func inlist(instr string) bool {
 }
 
 func getfeedlist(offset int) int {
-	text, _ := ioutil.ReadFile(RunCfg.feedpath + "timeline/timeline_" + strconv.Itoa(offset))
+	text, _ := ioutil.ReadFile(RunCfg.timeline + strconv.Itoa(offset))
 	frf := new(FrFjtml)
 	fmt.Printf("offset: %d\r", offset)
 	json.Unmarshal(text, frf)
 
 	frflen := 0
 	//check "posts" files
-	jpath := RunCfg.feedpath + "json/posts_"
+	//	jpath := RunCfg.feedpath + "json/posts_"
 	for _, p := range frf.Timelines.Posts {
-		feedpostlist = append(feedpostlist, jpath+p)
+		feedpostlist = append(feedpostlist, RunCfg.jpath+p)
 		frflen++
 	}
 	return frflen
@@ -233,7 +231,7 @@ func getfeedlist(offset int) int {
 
 func findlost() {
 	var outtext string
-	postlist, _ = filepath.Glob(RunCfg.feedpath + "json/posts_*")
+	postlist, _ = filepath.Glob(RunCfg.jpath + "*")
 	fmt.Printf("Posts in feed directory: %d\n", len(postlist))
 	lostcnt = 0
 	tmleof, offset := 1, 0
@@ -243,22 +241,24 @@ func findlost() {
 	}
 	fmt.Printf("Posts in timelines: %d\n", len(feedpostlist))
 	for _, itm := range postlist {
+		itm = strings.Replace(itm, `\`, `/`, -1)
 		if !inlist(itm) {
 			lostcnt++
 			lostlist = append(lostlist, itm)
 		}
 	}
-	if lostcnt > 0 {
-		fmt.Printf("------------\nFound %d lost posts\n", lostcnt)
-		outtext = fmt.Sprintf("Found %d lost posts\n", lostcnt)
-		for _, st := range lostlist {
-			outtext += fmt.Sprintf("%s\n", st)
-		}
-		ioutil.WriteFile("lost", []byte(outtext), 0644)
-		fmt.Printf("Created file 'lost'\n")
-	} else {
+	if lostcnt < 1 {
 		fmt.Printf("No lost posts found\n")
+		return
 	}
+
+	fmt.Printf("------------\nFound %d lost posts\n", lostcnt)
+	outtext = fmt.Sprintf("Found %d lost posts\n", lostcnt)
+	for _, st := range lostlist {
+		outtext += fmt.Sprintf("%s\n", st)
+	}
+	ioutil.WriteFile("lost.txt", []byte(outtext), 0644)
+	fmt.Printf("Created file 'lost.txt'\n")
 }
 
 func rebuildLists() {
@@ -267,7 +267,7 @@ func rebuildLists() {
 		Value int64
 	}
 	var RecList = []kv{}
-	postlist, _ = filepath.Glob(RunCfg.feedpath + "json/posts_*")
+	postlist, _ = filepath.Glob(RunCfg.jpath + "*")
 	// get timemarks
 	for i := 0; i < len(postlist); i++ {
 		fbin, _ := ioutil.ReadFile(postlist[i])
@@ -282,10 +282,8 @@ func rebuildLists() {
 	})
 	// make new lists
 	maxcnt := len(RecList)
-	cc := 0
-	step := 0
-	lastoffset := 0
-	lpath := RunCfg.feedpath + "index/list_"
+	cc, step, lastoffset := 0, 0, 0
+	//	lpath := RunCfg.feedpath + "index/list_"
 	for cc < maxcnt {
 		nlist := []string{}
 		lc := 0
@@ -298,8 +296,35 @@ func rebuildLists() {
 			}
 		}
 		lastoffset = step
-		ioutil.WriteFile(lpath+strconv.Itoa(step), []byte(strings.Join(nlist, "\n")), 0644)
+		ioutil.WriteFile(RunCfg.list+strconv.Itoa(step), []byte(strings.Join(nlist, "\n")), 0644)
 		step += Config.step
 	}
 	fmt.Printf("Posts processed: %d, last offset: %d\n", maxcnt, lastoffset)
+}
+
+func listFeeds(feedname string) {
+	if !isexists("feeds") {
+		outerror(1, "No feeds\n")
+	}
+	if feedname != "*" {
+		outerror(1, "Incorrect list cmd\n")
+	}
+
+	fmt.Printf("Feeds:\n\n")
+	files, _ := ioutil.ReadDir("feeds")
+	for _, item := range files {
+		if !item.IsDir() {
+			continue
+		}
+		flag := ""
+		if !isexists("feeds/" + item.Name() + "/json/profile") {
+			flag = " # no json data"
+		} else {
+			jfiles, _ := ioutil.ReadDir("feeds/" + item.Name() + "/json")
+			flag = fmt.Sprintf(" %d jsons", len(jfiles)-1)
+		}
+		fmt.Printf("%s: %s\n", item.Name(), flag)
+	}
+
+	fmt.Printf("\n")
 }
