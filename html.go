@@ -10,7 +10,6 @@ import (
 	"github.com/xartreal/frfpanehtml"
 )
 
-//var jpath string //json path
 
 func loadtemplates(singlemode bool) {
 	frfpanehtml.Templates = &frfpanehtml.THtmlTemplate{
@@ -21,7 +20,6 @@ func loadtemplates(singlemode bool) {
 	//set params
 	frfpanehtml.Params = frfpanehtml.TParams{Feedpath: RunCfg.feedpath, Step: Config.step,
 		Singlemode: singlemode, IndexPrefix: "index_", IndexPostfix: ".html"}
-	//	jpath = RunCfg.feedpath + "json/posts_"
 }
 
 func genPhtml(list []string, id string, isindex bool, title string, pen string, maxeof int) string {

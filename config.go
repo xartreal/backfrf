@@ -7,7 +7,7 @@ import (
 	"github.com/vaughan0/go-ini"
 )
 
-var myversion = "0.9.2"
+var myversion = "0.9.3"
 var useragent = "ARL backfrf/" + myversion
 
 var RunCfg struct {

@@ -37,7 +37,6 @@ func checkArgs() (string, string) {
 }
 
 var TimelineDB KVBase
-var ExtDB KVBase
 
 func main() {
 	fmt.Println("backfrf " + myversion + "\n")
@@ -80,9 +79,7 @@ func main() {
 	case "html": // html command
 		MkFeedPath(feedname)
 		message("Creating html, feed '%s'\n", feedname)
-		openDB(RunCfg.feedpath+"db/media.db", "ext", &ExtDB)
 		rebuildHtml()
-		closeDB(&ExtDB)
 		os.Exit(0)
 	case "lost": //find lost posts
 		MkFeedPath(feedname)
@@ -93,9 +90,6 @@ func main() {
 		Config.debugmode = 1
 		MkFeedPath(feedname)
 		message("Checking feed '%s'\n", feedname)
-		if !isexists(RunCfg.feedpath + "db/media.db") {
-			createDB("db/media.db", "ext", &ExtDB)
-		}
 		checkfeed()
 		os.Exit(0)
 	case "reindex": // reindex lists

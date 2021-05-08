@@ -37,7 +37,6 @@ func inmedialist(fext string) bool {
 
 func intWriteFile(url string, id, fext string) {
 	ioutil.WriteFile(url, []byte("media file not loaded"), 0755)
-	ExtDB.MyCollection.Set([]byte(id), []byte(fext))
 	MyStat.newimages++
 }
 
@@ -79,7 +78,6 @@ func getFile(id string, url string, media string, singlemode bool) {
 	//fmt.Println("response Body:", string(body))
 	if !singlemode {
 		ioutil.WriteFile(fnpath, body, 0644)
-		ExtDB.MyCollection.Set([]byte(id), []byte(fext))
 	} else {
 		ioutil.WriteFile(RunCfg.feedpath+"/"+fname, body, 0644)
 	}
@@ -113,7 +111,6 @@ func getPost(id string, singlemode bool) {
 		outfiletext := frfpanehtml.MkHtmlPage(id, text, false, 0, "", "")
 		outfiletext = strings.Replace(outfiletext, `href="./kube.min.css"`, `href="../../template/kube.min.css"`, -1)
 		ioutil.WriteFile(fx+".html", []byte(outfiletext), 0644)
-
 	}
 }
 
