@@ -58,9 +58,6 @@ func MkFeedItems(feedname string) {
 }
 
 func backup(feedname string) {
-	/*	if feedname == "@myname" {
-		feedname = Config.myname
-	}*/
 	if !checkIsFeed(feedname) {
 		outerror(2, "ERROR: Feed '%s' not found or not available\n", feedname)
 	}
@@ -91,7 +88,7 @@ func backup(feedname string) {
 	itemslist := strings.Join(newitems, "\n") + "\n"
 	ioutil.WriteFile(RunCfg.feedpath+"db/newitems", []byte(itemslist), 0644)
 
-	// close timeline db
+	// close timeline  db
 	closeDB(&TimelineDB)
 	//stat
 	outstat := fmt.Sprintf("\nTotal: %d records, new: %d, changed: %d\n%d new media files\n",
@@ -142,6 +139,7 @@ func checkTimeline(offset int) (int, int) {
 	nlflag = false
 	json.Unmarshal(text, frf)
 	// check id from timeline
+	//	jpath := RunCfg.feedpath + "json/posts_"
 	for _, p := range frf.Timelines.Posts {
 		if !isexists(RunCfg.jpath + p) {
 			if Config.debugmode == 1 {
@@ -155,6 +153,7 @@ func checkTimeline(offset int) (int, int) {
 	}
 	frfz := new(FrFfile)
 	json.Unmarshal(text, frfz)
+	//	frfzlen := 0
 	mtype := ""
 	for _, p := range frfz.Attachments {
 		if strings.EqualFold(p.MediaType, "image") {
@@ -177,13 +176,11 @@ func checkfeed() {
 	tmleof := 1
 	offset, errcnt, errinc := 0, 0, 0
 	nlflag = true
-	//	fmt.Println("")
 	for tmleof > 0 {
 		tmleof, errinc = checkTimeline(offset)
 		offset += Config.step
 		errcnt += errinc
 	}
-	//	fmt.Println("")
 	fmt.Printf("\n\nErrors detected: %d\n", errcnt)
 }
 
@@ -270,6 +267,7 @@ func rebuildLists() {
 	// make new lists
 	maxcnt := len(RecList)
 	cc, step, lastoffset := 0, 0, 0
+	//	lpath := RunCfg.feedpath + "index/list_"
 	for cc < maxcnt {
 		nlist := []string{}
 		lc := 0
@@ -292,7 +290,7 @@ func listFeeds(feedname string) {
 	if !isexists("feeds") {
 		outerror(1, "No feeds\n")
 	}
-	if feedname != "*" {
+	if feedname != "all" {
 		outerror(1, "Incorrect list cmd\n")
 	}
 

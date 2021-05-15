@@ -16,7 +16,7 @@ func helpprog() {
 		"rebuild html:      backfrf html <feed>\n",
 		"check integrity:   backfrf check <feed>\n",
 		"find lost posts:   backfrf lost <feed>\n",
-		"list feeds:        backfrf list *\n",
+		"list feeds:        backfrf list all\n",
 		"reindex timelines: backfrf reindex <feed>\n\n")
 	os.Exit(1)
 	//	fmt.Printf("init configuration: backfrf init <username> <password>\n")
@@ -37,6 +37,8 @@ func checkArgs() (string, string) {
 }
 
 var TimelineDB KVBase
+
+//var ExtDB KVBase
 
 func main() {
 	fmt.Println("backfrf " + myversion + "\n")
@@ -64,7 +66,6 @@ func main() {
 		if strings.HasPrefix(getaddr, "https:/") {
 			getaddr = filepath.Base(getaddr)
 		}
-		//		ReadConf()
 		loadtemplates(true)
 		// Check auth
 		checktoken(true)
@@ -78,6 +79,7 @@ func main() {
 		os.Exit(0)
 	case "html": // html command
 		MkFeedPath(feedname)
+		RunCfg.feedname = feedname
 		message("Creating html, feed '%s'\n", feedname)
 		rebuildHtml()
 		os.Exit(0)

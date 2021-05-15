@@ -2,5 +2,5 @@ github.com/steveyen/gkvlite v0.0.0-20141117050110-5b47ed6d7458 h1:xPexFI9EsTjMbQ
 github.com/steveyen/gkvlite v0.0.0-20141117050110-5b47ed6d7458/go.mod h1:I50Pwzl9dKZDA6bxpAzy+WYhEbW4yDMkh6/G6iRoock=
 github.com/vaughan0/go-ini v0.0.0-20130923145212-a98ad7ee00ec h1:DGmKwyZwEB8dI7tbLt/I/gQuP559o/0FrAkHKlQM/Ks=
 github.com/vaughan0/go-ini v0.0.0-20130923145212-a98ad7ee00ec/go.mod h1:owBmyHYMLkxyrugmfwE/DLJyW8Ro9mkphwuVErQ0iUw=
-github.com/xartreal/frfpanehtml v0.0.1 h1:nyYBj6HNwIn63tRasDrh1YzaOdz2QCU8pT4rvVN7w5I=
-github.com/xartreal/frfpanehtml v0.0.1/go.mod h1:2ddd28hdTunTG2gBFrSIP3fBkf1TY20erOHM8OFGO18=
+github.com/xartreal/frfpanehtml v0.0.2 h1:UeYxwOizKhR3IPZLzW1uyycoWXAqbt3nTmIT7hMS7XA=
+github.com/xartreal/frfpanehtml v0.0.2/go.mod h1:2ddd28hdTunTG2gBFrSIP3fBkf1TY20erOHM8OFGO18=
