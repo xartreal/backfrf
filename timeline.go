@@ -174,7 +174,7 @@ func (timeline *TTimeline) processTimeline() int {
 		}
 	}
 	if len(tlist) > 0 {
-		ioutil.WriteFile(RunCfg.list+timeline.textoffset, []byte(tlist), 644)
+		ioutil.WriteFile(RunCfg.list+timeline.textoffset, []byte(tlist), 0644)
 	}
 	MyStat.records += feedlen
 	return feedlen
