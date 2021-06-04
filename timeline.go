@@ -111,20 +111,22 @@ func getPost(id string, singlemode bool) {
 		outfiletext := frfpanehtml.MkHtmlPage(id, text, false, 0, "", "")
 		outfiletext = strings.Replace(outfiletext, `href="./kube.min.css"`, `href="../../template/kube.min.css"`, -1)
 		ioutil.WriteFile(fx+".html", []byte(outfiletext), 0644)
+
 	}
 }
 
 func mkTimeline(feedname string) *TTimeline {
 	ntimeline := new(TTimeline)
-	ntimeline.feedname = feedname
-	ntimeline.offset = 0
-	ntimeline.textoffset = "0"
+	ntimeline = &TTimeline{feedname: feedname, offset: 0, textoffset: "0"}
 	return ntimeline
 }
 
 func (timeline *TTimeline) getTimeline(offset int) *TTimeline {
 	xoffs := strconv.Itoa(offset)
 	url := "https://freefeed.net/v2/timelines/" + timeline.feedname + "?offset=" + xoffs
+	if RunCfg.metafeed {
+		url = "https://freefeed.net/v2/search?qs=" + RunCfg.metaurl + "&offset=" + xoffs
+	}
 
 	body := httpget(url, true)
 	// json correction
@@ -150,23 +152,23 @@ func (timeline *TTimeline) processTimeline() int {
 	fmt.Printf("\roffset: %d ", timeline.offset)
 	nlflag = false
 	json.Unmarshal(timeline.body, frf)
-	//	fmt.Printf("t=%q\n",frf.Timelines.Posts)
-	for idx, p := range frf.Timelines.Posts {
+	//	for idx, p := range frf.Timelines.Posts {
+	for idx, p := range frf.Posts {
 		if Config.archive != 1 && len(frf.Posts[idx].FriendfeedUrl) != 0 { //skip archive post
 			continue
 		}
-		tlist += p + "\n"
+		tlist += p.Id + "\n"
 		cx, _ := strconv.Atoi(frf.Posts[idx].OmittedComments)
 		cmark := strconv.Itoa(len(frf.Posts[idx].Comments) + cx)
 		newmark := frf.Posts[idx].UpdatedAt + cmark
 		feedlen++
-		if !isexists(RunCfg.jpath + p) {
-			intGetPost(p, newmark, "")
+		if !isexists(RunCfg.jpath + p.Id) {
+			intGetPost(p.Id, newmark, "")
 			MyStat.newrecords++
 		} else {
-			oldmark, _ := TimelineDB.MyCollection.Get([]byte(p))
+			oldmark, _ := TimelineDB.MyCollection.Get([]byte(p.Id))
 			if !strings.EqualFold(string(oldmark), newmark) {
-				intGetPost(p, newmark, "* ")
+				intGetPost(p.Id, newmark, "* ")
 				MyStat.changedrecords++
 			}
 		}

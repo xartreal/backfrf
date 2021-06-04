@@ -38,8 +38,6 @@ func checkArgs() (string, string) {
 
 var TimelineDB KVBase
 
-//var ExtDB KVBase
-
 func main() {
 	fmt.Println("backfrf " + myversion + "\n")
 	// command line parsing
@@ -57,6 +55,10 @@ func main() {
 	ReadConf()
 	if feedname == "@myname" {
 		feedname = Config.myname
+	}
+	if RunCfg.metafeed = strings.HasSuffix(feedname, ".feed"); RunCfg.metafeed {
+		MkMetaFeed(feedname)
+		feedname = strings.TrimSuffix(feedname, ".feed")
 	}
 
 	// commands
@@ -117,6 +119,9 @@ func main() {
 	default:
 		fmt.Printf("Unknown command '%s'\n", cmd)
 		os.Exit(1)
+	}
+	if RunCfg.metafeed {
+		fmt.Printf("Meta: '%s'\n", unescape(RunCfg.metaurl))
 	}
 
 	backup(feedname)

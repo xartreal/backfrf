@@ -26,7 +26,7 @@ func initRegs() {
 }
 
 func checkIsFeed(feedname string) bool {
-	if strings.Contains(feedname, "filter:") || (feedname == "home") {
+	if strings.Contains(feedname, "filter:") || (feedname == "home") || RunCfg.metafeed {
 		return true
 	}
 	res := httpget("https://freefeed.net/v1/users/"+feedname, false)

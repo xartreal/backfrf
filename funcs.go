@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
 )
@@ -66,6 +67,30 @@ func MkFeedPath(feedname string) {
 	RunCfg.timeline = feedpath + "/timeline/timeline_"
 	RunCfg.list = feedpath + "/index/list_"
 	RunCfg.mediapath = feedpath + "/media/"
+}
+
+func MkMetaFeed(feedname string) {
+	cf, err := ioutil.ReadFile(feedname)
+	if err != nil {
+		outerror(2, "FATAL: Can't open feed file '%s'\n", feedname)
+	}
+	for _, v := range strings.Split(string(cf), "\n") {
+		def := strings.Split(v, "=")
+		if len(def) != 2 {
+			continue
+		}
+		if strings.TrimSpace(def[0]) == "meta" {
+			RunCfg.metaurl = url.QueryEscape(strings.TrimSpace(def[1]))
+		}
+	}
+	if len(RunCfg.metaurl) < 4 {
+		outerror(2, "FATAL: meta not defined\n")
+	}
+}
+
+func unescape(in string) string {
+	out, _ := url.QueryUnescape(in)
+	return out
 }
 
 func loadtfile(name string) string {
