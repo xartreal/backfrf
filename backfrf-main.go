@@ -14,6 +14,7 @@ func helpprog() {
 		"get jsons:         backfrf json <feed>\n",
 		"get jsons only:    backfrf jsononly <feed>\n",
 		"rebuild html:      backfrf html <feed>\n",
+		"rebuild markdown:  backfrf md <feed>\n",
 		"check integrity:   backfrf check <feed>\n",
 		"find lost posts:   backfrf lost <feed>\n",
 		"list feeds:        backfrf list all\n",
@@ -84,6 +85,11 @@ func main() {
 		RunCfg.feedname = feedname
 		message("Creating html, feed '%s'\n", feedname)
 		rebuildHtml()
+		os.Exit(0)
+	case "md": // markdown command
+		MkFeedPath(feedname)
+		message("Creating markdown, feed '%s'\n", feedname)
+		rebuildMarkdown()
 		os.Exit(0)
 	case "lost": //find lost posts
 		MkFeedPath(feedname)

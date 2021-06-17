@@ -111,6 +111,12 @@ debug, logstat, loadmedia, allhtml, maxlast</i><br><br>
 Возможные значения:<br>
 0 - для вывода только минимально необходимой<br>
 1 - для вывода полной информации о ходе работы программы<br><br>
+В секции [md]:<br>
+<b>media</b> - Путь до медиафайлов для генерирования markdown-файлов<br>
+<b>ldate</b> - Добавлять ли дату в название markdown-файла<br>
+Возможные значения:<br>
+0 - не добавлять<br>
+1 - не добавлять<br><br>
 <h2>7. специальные режимы</h2>
 <code>backfrf json <i>feed</i></code><br>
 Скачивать фид в json, не генерировать html<br><br>
@@ -118,6 +124,8 @@ debug, logstat, loadmedia, allhtml, maxlast</i><br><br>
 Скачивать только json, без картинок и медиа-файлов<br><br>
 <code>backfrf html <i>feed</i></code><br>
 Перегенерировать html по имеющимся json<br><br>
+<code>backfrf md <i>feed</i></code><br>
+Генерировать markdown по имеющимся json<br><br>
 <code>backfrf check <i>feed</i></code><br>
 Проверить целостность бэкапа и докачать недостающие файлы<br><br>
 <code>backfrf lost <i>feed</i></code><br>

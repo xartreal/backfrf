@@ -127,6 +127,32 @@ func rebuildHtml() {
 	fmt.Printf("\n")
 }
 
+func rebuildMarkdown() {
+	hstart, maxeof := 0, Config.step
+	if !isexists(RunCfg.feedpath + "md") {
+		os.MkdirAll(RunCfg.feedpath+"md", 0755)
+	}
+	loadmdtemplates(false) //?
+	loadTXL("template/template_md.txl")
+	checkTXL([]string{"attach", "link", "qlink", "user", "title"})
+	//fmt.Printf("%d - %d -%d\n", hstart, step, maxeof)
+	fmt.Printf("\nScanning...")
+	for isexists(RunCfg.timeline + strconv.Itoa(hstart)) {
+		hstart += Config.step
+		//fmt.Printf("s: %d\n", hstart)
+	}
+	if hstart > Config.step {
+		maxeof = hstart - Config.step
+	}
+	fmt.Printf(" last offset: %d\n", maxeof-Config.step)
+	fmt.Printf("Building MD...\n")
+
+	for i := 0; i < maxeof; i += Config.step {
+		genmd(i, maxeof)
+	}
+	fmt.Printf("\n")
+}
+
 // special
 func checkTimeline(offset int) (int, int) {
 	frflen, errcnt := 0, 0

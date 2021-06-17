@@ -7,7 +7,7 @@ import (
 	"github.com/vaughan0/go-ini"
 )
 
-var myversion = "0.9.5"
+var myversion = "0.9.6"
 var useragent = "ARL backfrf/" + myversion
 
 var RunCfg struct {
@@ -35,6 +35,8 @@ var Config struct {
 	maxlast   int
 	archive   int
 	filter    string
+	mdmedia   string
+	mddate    int
 }
 
 func getIniVar(file ini.File, section string, name string) string {
@@ -70,4 +72,7 @@ func ReadConf() {
 	Config.maxlast = getIniNum(file, "user", "maxlast")
 	Config.archive = getIniNum(file, "user", "archive")
 	Config.filter, _ = file.Get("user", "filter")
+
+	Config.mdmedia, _ = file.Get("md", "media")
+	Config.mddate = getIniNum(file, "md", "ldate")
 }
