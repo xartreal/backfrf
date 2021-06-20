@@ -1,3 +1,6 @@
+0.9.7
+- remove prefix: json_
+
 0.9.6
 - добавлен генератор markdown
 

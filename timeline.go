@@ -51,20 +51,20 @@ func intGetPost(id, newmark, changemarker string) {
 }
 
 func getFile(id string, url string, media string, singlemode bool) {
-	var mtype string
+	//var mtype string
 	fext := path.Ext(url)
 	fname := id + fext
 	//	mediapath := RunCfg.feedpath + "media/"
 	if strings.EqualFold(media, "image") {
-		mtype = "image_"
+		//mtype = "image_"
 	} else {
-		mtype = "media_"
+		//mtype = "media_"
 		if (!singlemode && Config.loadmedia != 1) || (Config.loadmedia == 1 && !inmedialist(fext)) {
-			intWriteFile(RunCfg.mediapath+mtype+fname, id, fext)
+			intWriteFile(RunCfg.mediapath+fname, id, fext)
 			return
 		}
 	}
-	fname = mtype + fname
+	//fname = mtype + fname
 	fnpath := RunCfg.mediapath + fname
 	if isexists(fnpath) { // if file exists
 		return
@@ -82,7 +82,7 @@ func getFile(id string, url string, media string, singlemode bool) {
 		ioutil.WriteFile(RunCfg.feedpath+"/"+fname, body, 0644)
 	}
 	if Config.debugmode == 1 {
-		fmt.Printf("\nattach: " + mtype + id + fext)
+		fmt.Printf("\nattach: " + id + fext)
 	}
 	MyStat.newimages++
 }
@@ -118,6 +118,9 @@ func getPost(id string, singlemode bool) {
 func mkTimeline(feedname string) *TTimeline {
 	ntimeline := new(TTimeline)
 	ntimeline = &TTimeline{feedname: feedname, offset: 0, textoffset: "0"}
+	/*	ntimeline.feedname = feedname
+		ntimeline.offset = 0
+		ntimeline.textoffset = "0"*/
 	return ntimeline
 }
 

@@ -4,3 +4,5 @@ github.com/vaughan0/go-ini v0.0.0-20130923145212-a98ad7ee00ec h1:DGmKwyZwEB8dI7t
 github.com/vaughan0/go-ini v0.0.0-20130923145212-a98ad7ee00ec/go.mod h1:owBmyHYMLkxyrugmfwE/DLJyW8Ro9mkphwuVErQ0iUw=
 github.com/xartreal/frfpanehtml v0.0.2 h1:UeYxwOizKhR3IPZLzW1uyycoWXAqbt3nTmIT7hMS7XA=
 github.com/xartreal/frfpanehtml v0.0.2/go.mod h1:2ddd28hdTunTG2gBFrSIP3fBkf1TY20erOHM8OFGO18=
+github.com/xartreal/frfpanehtml v0.0.3 h1:sDjNKa3r//jRdkesPEEueMfF613/M71IJA4QIQGZj0g=
+github.com/xartreal/frfpanehtml v0.0.3/go.mod h1:2ddd28hdTunTG2gBFrSIP3fBkf1TY20erOHM8OFGO18=

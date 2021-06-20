@@ -46,7 +46,7 @@ func MkFeedItems(feedname string) {
 		os.MkdirAll(RunCfg.feedpath+"json", 0755)
 		os.MkdirAll(RunCfg.feedpath+"db", 0755)
 		os.MkdirAll(RunCfg.feedpath+"index", 0755)    //list_*
-		os.MkdirAll(RunCfg.feedpath+"media", 0755)    // image_*, media_*
+		os.MkdirAll(RunCfg.feedpath+"media", 0755)    // mediafiles
 		os.MkdirAll(RunCfg.feedpath+"timeline", 0755) //timeline_*
 	}
 	// create timeline db (if not exists) & open
@@ -105,11 +105,9 @@ func backup(feedname string) {
 func rebuildHtml() {
 	hstart, maxeof := 0, Config.step
 	loadtemplates(false)
-	//fmt.Printf("%d - %d -%d\n", hstart, step, maxeof)
 	fmt.Printf("\nScanning...")
 	for isexists(RunCfg.timeline + strconv.Itoa(hstart)) {
 		hstart += Config.step
-		//fmt.Printf("s: %d\n", hstart)
 	}
 	if hstart > Config.step {
 		maxeof = hstart - Config.step
@@ -135,11 +133,9 @@ func rebuildMarkdown() {
 	loadmdtemplates(false) //?
 	loadTXL("template/template_md.txl")
 	checkTXL([]string{"attach", "link", "qlink", "user", "title"})
-	//fmt.Printf("%d - %d -%d\n", hstart, step, maxeof)
 	fmt.Printf("\nScanning...")
 	for isexists(RunCfg.timeline + strconv.Itoa(hstart)) {
 		hstart += Config.step
-		//fmt.Printf("s: %d\n", hstart)
 	}
 	if hstart > Config.step {
 		maxeof = hstart - Config.step
@@ -165,7 +161,6 @@ func checkTimeline(offset int) (int, int) {
 	nlflag = false
 	json.Unmarshal(text, frf)
 	// check id from timeline
-	//	jpath := RunCfg.feedpath + "json/posts_"
 	for _, p := range frf.Timelines.Posts {
 		if !isexists(RunCfg.jpath + p) {
 			if Config.debugmode == 1 {
@@ -180,14 +175,14 @@ func checkTimeline(offset int) (int, int) {
 	frfz := new(FrFfile)
 	json.Unmarshal(text, frfz)
 	//	frfzlen := 0
-	mtype := ""
+	//mtype := ""
 	for _, p := range frfz.Attachments {
-		if strings.EqualFold(p.MediaType, "image") {
-			mtype = "image_"
-		} else {
-			mtype = "media_"
-		}
-		if !isexists(RunCfg.mediapath + mtype + p.Id + path.Ext(p.Url)) {
+		/*		if strings.EqualFold(p.MediaType, "image") {
+					mtype = "image_"
+				} else {
+					mtype = "media_"
+				}*/
+		if !isexists(RunCfg.mediapath + p.Id + path.Ext(p.Url)) {
 			//fmt.Printf(" image/media: %s\n", p.Id)
 			getFile(p.Id, p.Url, p.MediaType, false)
 			nlflag = true
@@ -337,4 +332,34 @@ func listFeeds(feedname string) {
 	}
 
 	fmt.Printf("\n")
+}
+
+func removeLegacy() {
+	jf, _ := filepath.Glob(RunCfg.jpath + "posts_*")
+	if len(jf) == 0 {
+		return
+	}
+	fmt.Printf("Converting legacy prefixes: posts_ ")
+	for _, f := range jf {
+		nf := strings.Replace(f, "posts_", "", -1)
+		if os.Rename(f, nf) != nil {
+			outerror(1, "\nFATAL: Can't rename %s\n", f)
+		}
+	}
+	fmt.Printf("image_ ")
+	jim, _ := filepath.Glob(RunCfg.mediapath + "image_*")
+	for _, f := range jim {
+		nf := strings.Replace(f, "image_", "", -1)
+		if os.Rename(f, nf) != nil {
+			outerror(1, "\nFATAL: Can't rename %s\n", f)
+		}
+	}
+	fmt.Printf("media_ \n")
+	jim, _ = filepath.Glob(RunCfg.mediapath + "media_*")
+	for _, f := range jim {
+		nf := strings.Replace(f, "media_", "", -1)
+		if os.Rename(f, nf) != nil {
+			outerror(1, "\nFATAL: Can't rename %s\n", f)
+		}
+	}
 }

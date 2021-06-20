@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"backfrf.v8md/frfmarkdown"
+	"github.com/xartreal/backfrf/frfmarkdown"
 )
 
 func loadmdtemplates(singlemode bool) {
@@ -20,7 +20,6 @@ func loadmdtemplates(singlemode bool) {
 	frfmarkdown.Params = frfmarkdown.TParams{Feedpath: RunCfg.feedpath, Step: Config.step,
 		Singlemode: singlemode, IndexPrefix: "index_", IndexPostfix: ".md",
 		ImagePrefix: Config.mdmedia}
-	//	jpath = RunCfg.feedpath + "json/posts_"
 }
 
 func loadTXL(name string) {
@@ -48,26 +47,20 @@ func checkTXL(keys []string) {
 
 func genPmarkdown(list []string, id string, isindex bool, title string, pen string, maxeof int) string {
 	maxx := len(list) - 1
-	//	outtext := "### " + title + " \n"
 	outtext := ""
 	prefix := ""
 	for i := 0; i < maxx; i++ {
 		if len(list[i]) < 2 {
 			continue
 		}
-		//	fmt.Printf("l=%v\n", list[i])
 		xtext, xtime := frfmarkdown.LoadJson(RunCfg.jpath+list[i]).ToMarkdown(list[i], "")
-		//		if Config.allhtml == 1 {
 		if Config.mddate == 1 {
 			prefix = xtime + "-"
 		}
 		afname := "md/" + prefix + list[i] + ".md"
 		ioutil.WriteFile(RunCfg.feedpath+afname, []byte(xtext), 0644)
-		//		}
-		//outtext += `[[` + prefix + list[i] + ".md]] \n"
 		outtext += frfmarkdown.MkQLink(prefix+list[i]+".md") + " \n"
 	}
-	//	ptitle := RunCfg.feedname + " - " + title + " - backfrf"
 	return frfmarkdown.MkMdPage(id, outtext, isindex, maxeof, RunCfg.feedname, title)
 }
 
@@ -76,7 +69,6 @@ func genmd(offset int, maxeof int) {
 	data, _ := ioutil.ReadFile(RunCfg.list + toffset)
 	list := strings.Split(string(data), "\n")
 	outname := "md/index_" + toffset + ".md"
-	//genPmarkdown(list, toffset, true, "offset "+toffset, "", maxeof)
 	outfiletext := genPmarkdown(list, toffset, true, "offset "+toffset, "", maxeof)
 	ioutil.WriteFile(RunCfg.feedpath+outname, []byte(outfiletext), 0644)
 	fmt.Printf("\roffset %d done", offset)
